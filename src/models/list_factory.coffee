@@ -1,20 +1,5 @@
 
-# list class
-class List
-  contructor: (id, name) ->
-    @id = id
-    @name = name
-    @cards = []
-
-  getName: ->
-    @name
-
-  addCard: (card) ->
-    @cards.push card
-
-  getCards: ->
-    @cards
-
+# list Factory class
 class ListFactory
   @build: (datas) ->
     lists = []
@@ -32,14 +17,4 @@ class ListFactory
           continue
     lists
 
-
-# card class
-class Card
-  contructor: (name) ->
-    @name
-
-  getName: ->
-    @name
-
-
-module.exports.ListFactory = ListFactory
+module.exports = ListFactory

@@ -1,7 +1,7 @@
 'use strict'
 
 $ = require 'jquery'
-ListFactory = require('./models/list').ListFactory
+ListFactory = require('./models/list_factory')
 
 add_interval = null
 
@@ -10,12 +10,22 @@ mail_body = ""
 
 # メールを送信する
 exportMail = ->
-  d = createExportText()
 
-  if d?
-    d.done (data) ->
-      console.log "mailto:sac2ndg@gmail.com?subject=#{board_name}&body=#{mail_body.replace(" ", "%20").replace("?", "%3f")}"
-      location.href = "mailto:sac2ndg@gmail.com?subject=#{board_name}&body=#{mail_body.replace(" ", "%20").replace("?", "%3f")}"
+  member_name = $('.member-avatar:first').attr('title')
+  parts = /^.*\((\w+)\)$/.exec(member_name)
+
+  email_address = ""
+
+  mail_deffer = $.getJSON("https://trello.com/1/members/#{parts[1]}",
+    fields: "name,email"
+  ).done (data) ->
+    email_address = data.email
+
+  body_deffer = createExportText()
+
+  if body_deffer?
+    $.when(mail_deffer, body_deffer).done ->
+      location.href = "mailto:#{email_address}?subject=#{board_name}&body=#{mail_body.replace(" ", "%20").replace("?", "%3f")}"
 
 # 送信するボードの本文を作成する
 createExportText = ->
