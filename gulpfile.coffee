@@ -36,9 +36,10 @@ gulp.task 'browserify-release', ->
 
 gulp.task 'copy', ->
   gulp.src [
-      'bower_components/jquery/dist/jquery.min.js'
+       'src/*.html'
     ]
-    .pipe gulp.dest 'src/lib'
+    .pipe gulp.dest 'build'
+
 
 gulp.task 'manifest', ->
   gulp.src 'src/manifest.json'
@@ -59,9 +60,9 @@ gulp.task 'clean', ->
 
 gulp.task 'default', ['build']
 
-gulp.task 'build', ['manifest', 'browserify']
+gulp.task 'build', ['manifest', 'copy', 'browserify']
 
-gulp.task 'release', ['manifest', 'browserify-release', 'zip']
+gulp.task 'release', ['manifest', 'copy', 'browserify-release', 'zip']
 
 gulp.task 'watch', ->
   gulp.watch 'src/**/*.coffee', ['browserify']

@@ -1,7 +1,7 @@
 Trello-Mail
 ============
 
-Chrome extension to export text mail from Trello.
+Chrome extension to mail data from Trello.
 
 Install Published Version
 -------------------------
@@ -20,7 +20,7 @@ Usage
 -----
 1. From a board, click on the board title
 2. Click on Share, print, and export...
-3. Click on Export Excel
+3. Click on Mail to
 
 Credit
 ------

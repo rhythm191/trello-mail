@@ -41,10 +41,9 @@ createExportText = ->
   board_id = parts[1]
 
   $.getJSON("https://trello.com/1/boards/#{board_id}",
-    lists: "all"
-    cards: "all"
+    lists: "open"
+    cards: "open"
     card_fields: "name,pos,idList"
-    members: "all"
     fields: "name,desc"
   ).done (data) ->
     # baord name
@@ -54,11 +53,11 @@ createExportText = ->
     lists = ListFactory.build(data)
     mail_body = ""
     for list in lists
-      mail_body += "#{list.name}%0d%0a"
+      mail_body += "#{list.name.replace("&", "%26")}%0d%0a"
       mail_body += "#{new Array(list.name.length * 2).join('-')}%0d%0a"
 
       for card in list.cards
-        mail_body += " - #{card.name}%0d%0a"
+        mail_body += " - #{card.name.replace("&", "%26")}%0d%0a"
 
       mail_body += "%0d%0a%0d%0a"
 
