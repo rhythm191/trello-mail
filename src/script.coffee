@@ -25,7 +25,7 @@ exportMail = ->
 
   if body_deffer?
     $.when(mail_deffer, body_deffer).done ->
-      location.href = "mailto:#{email_address}?subject=#{board_name}&body=#{mail_body.replace(" ", "%20").replace("?", "%3f")}"
+      location.href = "mailto:#{email_address}?subject=#{board_name}&body=#{mail_body.replace(',', '%2C').replace(' ', '%20').replace('?', '%3f')}"
 
 # 送信するボードの本文を作成する
 createExportText = ->
@@ -53,11 +53,11 @@ createExportText = ->
     lists = ListFactory.build(data)
     mail_body = ""
     for list in lists
-      mail_body += "#{list.name.replace("&", "%26")}%0d%0a"
+      mail_body += "#{list.name.replace('=', '%3D').replace('%', '%25').replace("&", "%26")}%0d%0a"
       mail_body += "#{new Array(list.name.length * 2).join('-')}%0d%0a"
 
       for card in list.cards
-        mail_body += " - #{card.name.replace("&", "%26")}%0d%0a"
+        mail_body += " - #{card.name.replace('=', '%3D').replace('%', '%25').replace("&", "%26")}%0d%0a"
 
       mail_body += "%0d%0a%0d%0a"
 
