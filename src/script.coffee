@@ -54,10 +54,10 @@ createExportText = ->
     mail_body = ""
     for list in lists
       mail_body += "#{list.name.replace('=', '%3D').replace('%', '%25').replace("&", "%26")}%0d%0a"
-      mail_body += "#{new Array(list.name.length * 2).join('-')}%0d%0a"
+      mail_body += "#{new Array(list.name.length * 2).join('-')}%0d%0a%0d%0a"
 
       for card in list.cards
-        mail_body += " - #{card.name.replace('=', '%3D').replace('%', '%25').replace("&", "%26")}%0d%0a"
+        mail_body += "* #{card.name.replace('=', '%3D').replace('%', '%25').replace("&", "%26")}%0d%0a"
 
       mail_body += "%0d%0a%0d%0a"
 
@@ -82,7 +82,7 @@ addMailLink = ->
       .insertAfter $export_btn.parent()
       .wrap document.createElement "li"
 
-# on DOM load 
+# on DOM load
 $ ->
   #the "Share, Print, Export..." link on the board header option list
   $(document).on 'mouseup', '.js-share', ->
