@@ -2,95 +2,74 @@
 
 import $ from 'jquery';
 
-var add_interval = null;
-
-let board_name = "";
-let mail_body = "";
-
-
 // メールを送信する
 let exportMail = () => {
-
-  let member_name = $('.member-avatar:first').attr('title')
-  let parts = /^.*\((\w+)\)$/.exec(member_name)
-
-  let email_address = ""
-
-  let mail_deffer = $.getJSON(`https://trello.com/1/members/${parts[1]}`, {
-    fields: "name,email"
-  }).done((data) => {
-    email_address = data.email;
-  });
-
+  let mail_deffer = getSendAddress();
   let body_deffer = createExportText();
 
-  if (!!body_deffer) {
-    $.when(mail_deffer, body_deffer).done(() => {
-      location.href = `mailto:${email_address}?subject=${board_name}&body=${mail_body.replace(',', '%2C').replace(' ', '%20').replace('?', '%3f')}"`
-    });
-  }
+  Promise.all([mail_deffer, body_deffer]).then((data) => {
+    const subjet = escapeMailBody(data[1][0])
+    const body = escapeMailBody(data[1][1]);
+    window.location.href =`mailto:${data[0]}?subject=${subjet}&body=${body}`
+  });
+}
+
+// 送信先のアドレスを返すPromiseを返す
+function getSendAddress() {
+
+  let member_name = document.getElementsByClassName('member-avatar')[0]
+    .getAttribute('title');
+  let user_name = /^.*\((\w+)\)$/.exec(member_name)[1]
+
+  return fetch(`/1/members/${user_name}?fields=name,email`, {
+    credentials: 'include'
+  }).then((res) => {
+    return res.json();
+  }).then((json) => {
+    return Promise.resolve(json.email);
+  });
 }
 
 // 送信するボードの本文を作成する
-let createExportText = () => {
+function createExportText() {
 
-  let boardExportURL = $('a.js-export-json').attr('href');
-  // RegEx to extract Board ID
-  let parts = /\/b\/(\w{8})\.json/.exec(boardExportURL);
+  let board_export_url = document.getElementsByClassName('js-export-json')[0]
+    .getAttribute('href');
+  let parts = /\/b\/(\w{8})\.json/.exec(board_export_url);
 
   if(!parts) {
     console.log("Board menu not open.");
-    return;
+    return Promise.reject();
   }
 
   const board_id = parts[1];
 
-  return $.getJSON(`https://trello.com/1/boards/${board_id}`, {
-    lists: "open",
-    cards: "open",
-    card_fields: "name,pos,idList",
-    fields: "name,desc"
-  }).done((data) => {
+  return fetch(`/1/boards/${board_id}?lists=open&cards=open`
+     + '&card_fields=name,pos,idList'
+     + '&fields=name,desc', {
+    credentials: 'include'
+  }).then((res) => {
+    return res.json();
+  }).then((data) => {
     // baord name
-    board_name = data.name
+    let board_name = data.name
 
     // lists and cards
     let lists = getCardLists(data)
-    mail_body = "";
+
+    let mail_body = "";
     for (let list of lists) {
-      mail_body += `${list.name.replace('=', '%3D').replace('%', '%25').replace("&", "%26")}%0d%0a`;
-      mail_body += `${new Array(list.name.length * 2).join('-')}%0d%0a%0d%0a`;
+      mail_body += `${list.name}\n`;
+      mail_body += `${new Array(list.name.length * 2).join('-')}\n\n`;
 
       for (let card of list.cards) {
-        mail_body += `* ${card.name.replace('=', '%3D').replace('%', '%25').replace("&", "%26")}%0d%0a`;
+        mail_body += `* ${card.name}\n`;
       }
 
-      mail_body += "%0d%0a%0d%0a";
+      mail_body += "\n\n";
     }
+    return Promise.resolve([board_name, mail_body]);
   });
-}
-
-// メール送信のリンクを作成する
-let addMailLink = () => {
-  let $export_btn = $('a.js-export-json');
-
-  if ($('.pop-over-list').find('.js-export-mail').length != 0) {
-    clearInterval(add_interval);
-    return;
-  }
-
-  if (!!$export_btn) {
-    $('<a>').attr({
-        class: 'js-export-mail',
-        href: '#',
-        target: '_blank',
-        'title': 'Export board to mail'
-      })
-      .text('Mail to')
-      .click(exportMail)
-      .insertAfter($export_btn.parent())
-      .wrap(document.createElement("li"));
-  }
 }
 
 // カードリストを作成する
@@ -112,8 +91,44 @@ function getCardLists(datas) {
       }
     }
   }
-
   return lists;
+}
+
+// メールの文字列をエスケープする
+function escapeMailBody(str) {
+  return str.replace(/%/g, '%25')
+    .replace(/\n/g, '%0d%0a')
+    .replace(/=/g, '%3D')
+    .replace(/&/g, "%26")
+    .replace(/,/g, '%2C')
+    .replace(/ /g, '%20')
+    .replace(/\?/g, '%3f')
+}
+
+
+var add_interval = null;
+
+// メール送信のリンクを作成する
+function addMailLink() {
+  let $export_btn = $('a.js-export-json');
+
+  if ($('.pop-over-list').find('.js-export-mail').length != 0) {
+    clearInterval(add_interval);
+    return;
+  }
+
+  if (!!$export_btn) {
+    $('<a>').attr({
+        class: 'js-export-mail',
+        href: '#',
+        target: '_blank',
+        'title': 'Export board to mail'
+      })
+      .text('Mail to')
+      .click(exportMail)
+      .insertAfter($export_btn.parent())
+      .wrap(document.createElement("li"));
+  }
 }
 
 
@@ -123,4 +138,4 @@ $(document).ready(function($) {
   $(document).on('mouseup', '.js-share', () => {
     add_interval = setInterval(addMailLink, 300);
   });
-})
+});
