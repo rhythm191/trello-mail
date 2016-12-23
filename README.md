@@ -9,15 +9,9 @@ to be prepared
 
 Install Development Version
 ---------------------------
-1. Download the repository as a zip file
+1. Download a zip file from [release page](https://github.com/rhythm191/trello-mail/releases/)
 2. Extract zip
-3. Build command
-    npm install
-    gulp build
-3. Go to Chrome Exensions: [chrome://chrome/extensions/](chrome://chrome/extensions/)
-4. Click on Developer Mode checkbox
-5. Click on Load unpacked extension...
-6. Select the build folder
+3. trello-mail.crx drop to Chrome
 
 Usage
 -----
