@@ -1,6 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
+import Clipboard from 'clipboard';
 
 // メールを送信する
 let exportMail = () => {
@@ -105,7 +106,6 @@ function escapeMailBody(str) {
     .replace(/\?/g, '%3f')
 }
 
-
 var add_mail_interval = null;
 
 // メール送信のリンクを作成する
@@ -136,24 +136,35 @@ var add_clipboard_interval = null;
 // メール送信のリンクを作成する
 function addClipboardlLink() {
   let $export_btn = $('a.js-export-json');
-  let clipboardData = e.clipboardData
+  let $pop_over_list = $('.pop-over-list');
 
-  if ($('.pop-over-list').find('.js-export-clipboard').length != 0) {
+  if ($('.pop-over-list').find('.js-copy-clipboard').length != 0) {
     clearInterval(add_clipboard_interval);
     return;
   }
 
   if (!!$export_btn) {
+
+    // データを取りに行ってリンクに文字列を仕込む
+    createExportText().then((data) => {
+      const body = data[1];
+
+      $('.js-copy-clipboard')
+        .attr('data-clipboard-text', body)
+        .click(() => { alert('クリップボードにコピーしました。')});
+
+      new Clipboard('.js-copy-clipboard');
+    });
+
     $('<a>').attr({
-        class: 'js-export-mail',
-        href: '#',
-        target: '_blank',
-        'title': 'copy board to clipboard'
-      })
-      .text('M to')
-      .click(exportMail)
-      .insertAfter($export_btn.parent())
-      .wrap(document.createElement("li"));
+      class: 'js-copy-clipboard',
+      href: '#',
+      target: '_blank',
+      'title': 'copy board to clipboard'
+    })
+    .text('copy clipboard')
+    .insertAfter($export_btn.parent())
+    .wrap(document.createElement("li"));
   }
 }
 
