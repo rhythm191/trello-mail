@@ -106,14 +106,14 @@ function escapeMailBody(str) {
 }
 
 
-var add_interval = null;
+var add_mail_interval = null;
 
 // メール送信のリンクを作成する
 function addMailLink() {
   let $export_btn = $('a.js-export-json');
 
   if ($('.pop-over-list').find('.js-export-mail').length != 0) {
-    clearInterval(add_interval);
+    clearInterval(add_mail_interval);
     return;
   }
 
@@ -131,11 +131,38 @@ function addMailLink() {
   }
 }
 
+var add_clipboard_interval = null;
+
+// メール送信のリンクを作成する
+function addClipboardlLink() {
+  let $export_btn = $('a.js-export-json');
+  let clipboardData = e.clipboardData
+
+  if ($('.pop-over-list').find('.js-export-clipboard').length != 0) {
+    clearInterval(add_clipboard_interval);
+    return;
+  }
+
+  if (!!$export_btn) {
+    $('<a>').attr({
+        class: 'js-export-mail',
+        href: '#',
+        target: '_blank',
+        'title': 'copy board to clipboard'
+      })
+      .text('M to')
+      .click(exportMail)
+      .insertAfter($export_btn.parent())
+      .wrap(document.createElement("li"));
+  }
+}
+
 
 // on DOM load
 $(document).ready(function($) {
   // the "Share, Print, Export..." link on the board header option list
   $(document).on('mouseup', '.js-share', () => {
-    add_interval = setInterval(addMailLink, 300);
+    add_mail_interval = setInterval(addMailLink, 300);
+    add_clipboard_interval = setInterval(addClipboardlLink, 300);
   });
 });
