@@ -5,7 +5,7 @@
   "main": "src/script.js",
   "scripts": {
     "webpack": "webpack",
-    "build": "webpack && gulp manifest"
+    "build": "NODE_ENV=production webpack && gulp manifest"
   },
   "author": "rhythm191",
   "license": "MIT",
