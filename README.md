@@ -3,6 +3,8 @@ Trello-Mail
 
 Chrome extension to mail data from Trello.
 
+ver 1.3.0 feature "copy to clipboard"
+
 Install Published Version
 -------------------------
 to be prepared
