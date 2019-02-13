@@ -8,69 +8,76 @@ let exportMail = () => {
   let mail_deffer = getSendAddress();
   let body_deffer = createExportText();
 
-  Promise.all([mail_deffer, body_deffer]).then((data) => {
-    const subjet = escapeMailBody(data[1][0])
+  Promise.all([mail_deffer, body_deffer]).then(data => {
+    const subjet = escapeMailBody(data[1][0]);
     const body = escapeMailBody(data[1][1]);
-    window.location.href =`mailto:${data[0]}?subject=${subjet}&body=${body}`
+    window.location.href = `mailto:${data[0]}?subject=${subjet}&body=${body}`;
   });
-}
+};
 
 // 送信先のアドレスを返すPromiseを返す
 function getSendAddress() {
-
-  let member_name = document.getElementsByClassName('member-avatar')[0]
+  let member_name = document
+    .getElementsByClassName('member-avatar')[0]
     .getAttribute('title');
-  let user_name = /^.*\((\w+)\)$/.exec(member_name)[1]
+  let user_name = /^.*\((\w+)\)$/.exec(member_name)[1];
 
   return fetch(`/1/members/${user_name}?fields=name,email`, {
     credentials: 'include'
-  }).then((res) => {
-    return res.json();
-  }).then((json) => {
-    return Promise.resolve(json.email);
-  });
+  })
+    .then(res => {
+      return res.json();
+    })
+    .then(json => {
+      return Promise.resolve(json.email);
+    });
 }
 
 // 送信するボードの本文を作成する
 function createExportText() {
-
-  let board_export_url = document.getElementsByClassName('js-export-json')[0]
+  let board_export_url = document
+    .getElementsByClassName('js-export-json')[0]
     .getAttribute('href');
   let parts = /\/b\/(\w{8})\.json/.exec(board_export_url);
 
-  if(!parts) {
-    console.log("Board menu not open.");
+  if (!parts) {
+    console.log('Board menu not open.');
     return Promise.reject();
   }
 
   const board_id = parts[1];
 
-  return fetch(`/1/boards/${board_id}?lists=open&cards=open`
-     + '&card_fields=name,pos,idList'
-     + '&fields=name,desc', {
-    credentials: 'include'
-  }).then((res) => {
-    return res.json();
-  }).then((data) => {
-    // baord name
-    let board_name = data.name
-
-    // lists and cards
-    let lists = getCardLists(data)
-
-    let mail_body = "";
-    for (let list of lists) {
-      mail_body += `${list.name}\n`;
-      mail_body += `${new Array(list.name.length * 2).join('-')}\n\n`;
-
-      for (let card of list.cards) {
-        mail_body += `* ${card.name}\n`;
-      }
-
-      mail_body += "\n\n";
+  return fetch(
+    `/1/boards/${board_id}?lists=open&cards=open` +
+      '&card_fields=name,pos,idList' +
+      '&fields=name,desc',
+    {
+      credentials: 'include'
     }
-    return Promise.resolve([board_name, mail_body]);
-  });
+  )
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      // baord name
+      let board_name = data.name;
+
+      // lists and cards
+      let lists = getCardLists(data);
+
+      let mail_body = '';
+      for (let list of lists) {
+        mail_body += `${list.name}\n`;
+        mail_body += `${new Array(list.name.length * 2).join('-')}\n\n`;
+
+        for (let card of list.cards) {
+          mail_body += `* ${card.name}\n`;
+        }
+
+        mail_body += '\n\n';
+      }
+      return Promise.resolve([board_name, mail_body]);
+    });
 }
 
 // カードリストを作成する
@@ -86,7 +93,7 @@ function getCardLists(datas) {
 
     for (let card_data of datas.cards) {
       if (list.id === card_data.idList) {
-        list.cards.push({name: card_data.name});
+        list.cards.push({ name: card_data.name });
       } else {
         continue;
       }
@@ -97,13 +104,14 @@ function getCardLists(datas) {
 
 // メールの文字列をエスケープする
 function escapeMailBody(str) {
-  return str.replace(/%/g, '%25')
+  return str
+    .replace(/%/g, '%25')
     .replace(/\n/g, '%0d%0a')
     .replace(/=/g, '%3D')
-    .replace(/&/g, "%26")
+    .replace(/&/g, '%26')
     .replace(/,/g, '%2C')
     .replace(/ /g, '%20')
-    .replace(/\?/g, '%3f')
+    .replace(/\?/g, '%3f');
 }
 
 var add_mail_interval = null;
@@ -118,16 +126,17 @@ function addMailLink() {
   }
 
   if (!!$export_btn) {
-    $('<a>').attr({
+    $('<a>')
+      .attr({
         class: 'js-export-mail',
         href: '#',
         target: '_blank',
-        'title': 'Export board to mail'
+        title: 'Export board to mail'
       })
       .text('Mail to')
       .click(exportMail)
       .insertAfter($export_btn.parent())
-      .wrap(document.createElement("li"));
+      .wrap(document.createElement('li'));
   }
 }
 
@@ -144,30 +153,38 @@ function addClipboardlLink() {
   }
 
   if (!!$export_btn) {
-
     // データを取りに行ってリンクに文字列を仕込む
-    createExportText().then((data) => {
+    createExportText().then(data => {
       const body = data[1];
 
-      $('.js-copy-clipboard')
-        .attr('data-clipboard-text', body)
-        .click(() => { alert('クリップボードにコピーしました。')});
+      // FIXME: chromeのアップデートかなんかでclipboard.jsダメになったので対策
+      execCopy(body);
+      alert('クリップボードにコピーしました。');
 
-      new Clipboard('.js-copy-clipboard');
+      // $('#js-clipboard-data').val(body);
+
+      // const clipboard = new Clipboard('.js-copy-clipboard');
+      // clipboard.on('success', e => {
+      //   alert('クリップボードにコピーしました。');
+      // });
     });
 
-    $('<a>').attr({
-      class: 'js-copy-clipboard',
-      href: '#',
-      target: '_blank',
-      'title': 'copy board to clipboard'
-    })
-    .text('copy clipboard')
-    .insertAfter($export_btn.parent())
-    .wrap(document.createElement("li"));
+    $('<a>')
+      .attr({
+        class: 'js-copy-clipboard',
+        href: '#',
+        target: '_blank',
+        title: 'copy board to clipboard'
+      })
+      .text('copy clipboard')
+      .insertAfter($export_btn.parent())
+      .wrap(document.createElement('li'));
+
+    $('<textarea>')
+      .attr({ id: 'js-clipboard-data', style: 'display: none;' })
+      .insertAfter($export_btn.parent());
   }
 }
-
 
 // on DOM load
 $(document).ready(function($) {
@@ -177,3 +194,34 @@ $(document).ready(function($) {
     add_clipboard_interval = setInterval(addClipboardlLink, 300);
   });
 });
+
+function execCopy(string) {
+  // 空div 生成
+  var tmp = document.createElement('div');
+  // 選択用のタグ生成
+  var pre = document.createElement('pre');
+
+  // 親要素のCSSで user-select: none だとコピーできないので書き換える
+  pre.style.webkitUserSelect = 'auto';
+  pre.style.userSelect = 'auto';
+
+  tmp.appendChild(pre).textContent = string;
+
+  // 要素を画面外へ
+  var s = tmp.style;
+  s.position = 'fixed';
+  s.right = '200%';
+
+  // body に追加
+  document.body.appendChild(tmp);
+  // 要素を選択
+  document.getSelection().selectAllChildren(tmp);
+
+  // クリップボードにコピー
+  var result = document.execCommand('copy');
+
+  // 要素削除
+  document.body.removeChild(tmp);
+
+  return result;
+}

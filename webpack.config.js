@@ -1,35 +1,65 @@
-var webpack = require('webpack');
+const webpack = require('webpack');
 
-webpack_config = {
-  entry: 'script.js',
-  output: {
-    path: __dirname + '/build/',
-    publicPath: '../build/',
-    filename: 'script.js'
-  },
-  resolve: {
-    modulesDirectories: ['node_modules', 'src'],
-    extensions: ['', '.js', '.jsx']
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: "babel",
-        query:{
-          presets: ['es2015']
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+const path = require('path');
+
+module.exports = (env, argv) => {
+  const IS_PRODUCTION = argv.mode === 'production';
+
+  const setting = {
+    entry: 'script.js',
+    output: {
+      path: path.resolve(__dirname, './build/'),
+      publicPath: '../build/',
+      filename: 'script.js'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/,
+          options: {
+            presets: ['@babel/preset-env']
+          }
         }
-      }
+      ]
+    },
+    resolve: {
+      modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+      extensions: ['*', '.js', '.vue', '.json']
+    },
+    devServer: {
+      historyApiFallback: true,
+      noInfo: true,
+      contentBase: path.join(__dirname, 'public'),
+      overlay: true,
+      watchContentBase: true
+    },
+    performance: {
+      hints: false
+    },
+    optimization: {
+      minimizer: []
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery'
+      })
     ]
-  },
-  devtool: 'inline-source-map',
-  plugins: []
+  };
+
+  if (IS_PRODUCTION) {
+    setting.optimization.minimizer.push(
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true
+      })
+    );
+  }
+
+  return setting;
 };
-
-if (process.env.NODE_ENV === 'production') {
-  webpack_config.devtool = false;
-  webpack_config.plugins.push(new webpack.optimize.UglifyJsPlugin())
-}
-
-module.exports = webpack_config
