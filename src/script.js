@@ -158,10 +158,11 @@ function addClipboardlLink() {
       const body = data[1];
 
       // FIXME: chromeのアップデートかなんかでclipboard.jsダメになったので対策
-      execCopy(body);
-      alert('クリップボードにコピーしました。');
-
-      // $('#js-clipboard-data').val(body);
+      $('.js-copy-clipboard').on('click', (e) => {
+        e.preventDefault();
+        execCopy(body);
+        alert('クリップボードにコピーしました。');
+      });
 
       // const clipboard = new Clipboard('.js-copy-clipboard');
       // clipboard.on('success', e => {
