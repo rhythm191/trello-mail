@@ -76,3 +76,5 @@ sftp-config.json
 # build
 build/
 
+
+build.zip
