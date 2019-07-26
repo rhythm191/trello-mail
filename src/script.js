@@ -34,11 +34,10 @@ function getSendAddress() {
 }
 
 // 送信するボードの本文を作成する
-function createExportText() {
-  let board_export_url = document
-    .getElementsByClassName('js-export-json')[0]
-    .getAttribute('href');
-  let parts = /\/b\/(\w{8})\.json/.exec(board_export_url);
+function createExportText(list_title) {
+  let board_url = location.href;
+  let parts = /\/b\/(\w{8})\//.exec(board_url);
+  console.log(list_title);
 
   if (!parts) {
     console.log('Board menu not open.');
@@ -67,14 +66,16 @@ function createExportText() {
 
       let mail_body = '';
       for (let list of lists) {
-        mail_body += `${list.name}\n`;
-        mail_body += `${new Array(list.name.length * 2).join('-')}\n\n`;
+        if (!list_title || list_title == list.name) {
+          mail_body += `${list.name}\n`;
+          mail_body += `${new Array(list.name.length * 2).join('-')}\n\n`;
 
-        for (let card of list.cards) {
-          mail_body += `* ${card.name}\n`;
+          for (let card of list.cards) {
+            mail_body += `* ${card.name}\n`;
+          }
+
+          mail_body += '\n\n';
         }
-
-        mail_body += '\n\n';
       }
       return Promise.resolve([board_name, mail_body]);
     });
@@ -142,8 +143,8 @@ function addMailLink() {
 
 var add_clipboard_interval = null;
 
-// メール送信のリンクを作成する
-function addClipboardlLink() {
+// クリップボードにコピーのリンクを作成する
+function addClipboardLink() {
   let $export_btn = $('a.js-export-json');
   let $pop_over_list = $('.pop-over-list');
 
@@ -158,7 +159,7 @@ function addClipboardlLink() {
       const body = data[1];
 
       // FIXME: chromeのアップデートかなんかでclipboard.jsダメになったので対策
-      $('.js-copy-clipboard').on('click', (e) => {
+      $('.js-copy-clipboard').on('click', e => {
         e.preventDefault();
         execCopy(body);
         alert('クリップボードにコピーしました。');
@@ -187,12 +188,74 @@ function addClipboardlLink() {
   }
 }
 
+var add_clipboard_list_interval = null;
+
+// リストをクリップボードにコピーのリンクを作成する
+function addClipboardListLink(list_title) {
+  return function() {
+    let $follow_btn = $('a.js-list-subscribe');
+    let $pop_over_list = $('.pop-over-list');
+
+    if ($('.pop-over-list').find('.js-copy-clipboard-list').length != 0) {
+      clearInterval(add_clipboard_list_interval);
+      return;
+    }
+
+    if (!!$follow_btn) {
+      // データを取りに行ってリンクに文字列を仕込む
+      createExportText(list_title).then(data => {
+        const body = data[1];
+
+        // FIXME: chromeのアップデートかなんかでclipboard.jsダメになったので対策
+        $('.js-copy-clipboard-list').on('click', e => {
+          e.preventDefault();
+          execCopy(body);
+          alert('クリップボードにコピーしました。');
+        });
+
+        // const clipboard = new Clipboard('.js-copy-clipboard');
+        // clipboard.on('success', e => {
+        //   alert('クリップボードにコピーしました。');
+        // });
+      });
+
+      $('<a>')
+        .attr({
+          class: 'js-copy-clipboard-list',
+          href: '#',
+          target: '_blank',
+          title: 'copy list to clipboard'
+        })
+        .text('copy clipboard')
+        .insertAfter($follow_btn.parent())
+        .wrap(document.createElement('li'));
+
+      $('<textarea>')
+        .attr({ id: 'js-clipboard-data', style: 'display: none;' })
+        .insertAfter($follow_btn.parent());
+    }
+  };
+}
+
 // on DOM load
 $(document).ready(function($) {
   // the "Share, Print, Export..." link on the board header option list
   $(document).on('mouseup', '.js-share', () => {
     add_mail_interval = setInterval(addMailLink, 300);
-    add_clipboard_interval = setInterval(addClipboardlLink, 300);
+    add_clipboard_interval = setInterval(addClipboardLink, 300);
+  });
+
+  // open list menu
+  $(document).on('mouseup', '.js-open-list-menu', function(e) {
+    let list_title = $(this)
+      .parent()
+      .parent()
+      .find('.js-list-name-assist')
+      .text();
+    add_clipboard_list_interval = setInterval(
+      addClipboardListLink(list_title),
+      300
+    );
   });
 });
 
