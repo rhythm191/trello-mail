@@ -28,7 +28,7 @@ module.exports = (env, argv) => {
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
-      extensions: ['*', '.js', '.vue', '.json']
+      extensions: ['*', '.js', '.json']
     },
     devServer: {
       historyApiFallback: true,
@@ -42,14 +42,7 @@ module.exports = (env, argv) => {
     },
     optimization: {
       minimizer: []
-    },
-    plugins: [
-      new webpack.ProvidePlugin({
-        $: 'jquery',
-        jQuery: 'jquery',
-        'window.jQuery': 'jquery'
-      })
-    ]
+    }
   };
 
   if (IS_PRODUCTION) {

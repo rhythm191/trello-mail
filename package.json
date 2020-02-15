@@ -4,9 +4,9 @@
   "description": "Export trello's board to text mail",
   "main": "src/script.js",
   "scripts": {
-    "webpack": "webpack",
-    "build": "webpack --progress --hide-modules --mode production && gulp manifest",
-    "build:dev": "webpack --progress --hide-modules --mode development  --devtool source-map && gulp manifest"
+    "build:manifest": "cp manifest.json build",
+    "build": "webpack --progress --hide-modules --mode production && yarn run build:manifest",
+    "build:dev": "yarn run build:manifest && webpack --progress --hide-modules --mode development --devtool source-map"
   },
   "author": "rhythm191",
   "license": "MIT",
@@ -17,16 +17,7 @@
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.7.1",
-    "@vue/babel-preset-app": "^4.0.5",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.21.0",
     "babel-loader": "^8.0.5",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-vue": "^2.0.2",
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-load-plugins": "^1.4.0",
-    "gulp-zip": "^5.0.1",
     "prettier": "^1.16.4",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.29.3",
