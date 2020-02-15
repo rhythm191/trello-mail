@@ -15,7 +15,7 @@ describe('CardService', () => {
     expect(name).toBe('test@example.com');
   });
 
-  test('getBoardLists', async () => {
+  describe('getBoard', () => {
     fetchMock.get(
       '/1/boards/111?lists=open&cards=open&card_fields=name,idList&fields=name',
       {
@@ -40,17 +40,36 @@ describe('CardService', () => {
               pos: 65535,
               subscribed: false,
               softLimit: null
+            },
+            {
+              id: '5dd9c9d8689d2f1572a5b552',
+              name: 'this is test list2',
+              closed: false,
+              idBoard: '5dd9c9ce4243690dc8020303',
+              pos: 65536,
+              subscribed: false,
+              softLimit: null
             }
           ]
         }
       }
     );
 
-    const board = await CardService.getBoardLists('111');
-    expect(board.name).toBe('test');
-    expect(board.lists.length).toBe(1);
-    expect(board.lists[0].name).toBe('this is test list');
-    expect(board.lists[0].cards[0].name).toBe('this is test card');
+    test('list name is undefined', async () => {
+      const board = await CardService.getBoard('111');
+      expect(board.name).toBe('test');
+      expect(board.lists.length).toBe(2);
+      expect(board.lists[0].name).toBe('this is test list');
+      expect(board.lists[0].cards[0].name).toBe('this is test card');
+    });
+
+    test('list name is defined', async () => {
+      const board = await CardService.getBoard('111', 'this is test list');
+      expect(board.name).toBe('test');
+      expect(board.lists.length).toBe(1);
+      expect(board.lists[0].name).toBe('this is test list');
+      expect(board.lists[0].cards[0].name).toBe('this is test card');
+    });
   });
 
   describe('listDataToCardLists', () => {

@@ -6,9 +6,10 @@ import * as utils from './utils';
 // メールを送信する
 let exportMail = async () => {
   const member_name: string =
-    document.getElementsByClassName('member-avatar')[0].getAttribute('title') ||
-    '';
-  const userNameReg = /^.*\((\w+)\)$/.exec(member_name);
+    document
+      .getElementsByClassName('js-open-header-member-menu')[0]
+      .getAttribute('title') || '';
+  const userNameReg = /.*\((\w+)\)/.exec(member_name);
   const boardIdReg = /\/b\/(\w{8})\//.exec(location.href);
 
   if (!userNameReg || !boardIdReg) {
@@ -16,111 +17,28 @@ let exportMail = async () => {
     return;
   }
 
-  const mail = CardService.getSendAddress;
-
-  let mail_deffer = getSendAddress();
-  let body_deffer = createExportText();
-
-  Promise.all([mail_deffer, body_deffer]).then(data => {
-    const subjet = utils.escapeMailText(data[1][0]);
-    const body = utils.escapeMailText(data[1][1]);
-    window.location.href = `mailto:${data[0]}?subject=${subjet}&body=${body}`;
+  Promise.all([
+    CardService.getSendAddress(userNameReg[1]),
+    CardService.getBoard(boardIdReg[1])
+  ]).then(([address, board]) => {
+    const subjet = utils.escapeMailText(board.name);
+    const body = utils.escapeMailText(
+      board.lists.map(list => utils.listToString(list)).join('\n\n')
+    );
+    window.location.href = `mailto:${address}?subject=${subjet}&body=${body}`;
   });
 };
 
-// 送信先のアドレスを返すPromiseを返す
-function getSendAddress() {
-  let member_name = document
-    .getElementsByClassName('member-avatar')[0]
-    .getAttribute('title');
-  let user_name = /^.*\((\w+)\)$/.exec(member_name)[1];
-
-  return fetch(`/1/members/${user_name}?fields=email`, {
-    credentials: 'include'
-  })
-    .then(res => {
-      return res.json();
-    })
-    .then(json => {
-      return Promise.resolve(json.email);
-    });
-}
-
-// 送信するボードの本文を作成する
-function createExportText(list_title) {
-  let board_url = location.href;
-  let parts = /\/b\/(\w{8})\//.exec(board_url);
-  console.log(list_title);
-
-  if (!parts) {
-    console.log('Board menu not open.');
-    return Promise.reject();
-  }
-
-  const board_id = parts[1];
-
-  return fetch(
-    `/1/boards/${board_id}?lists=open&cards=open&card_fields=name,idList&fields=name`,
-    {
-      credentials: 'include'
-    }
-  )
-    .then(res => {
-      return res.json();
-    })
-    .then(data => {
-      // baord name
-      let board_name = data.name;
-
-      // lists and cards
-      let lists = getCardLists(data);
-
-      let mail_body = '';
-      for (let list of lists) {
-        if (!list_title || list_title == list.name) {
-          mail_body += `${list.name}\n`;
-          mail_body += `${new Array(list.name.length * 2).join('-')}\n\n`;
-
-          for (let card of list.cards) {
-            mail_body += `* ${card.name}\n`;
-          }
-
-          mail_body += '\n\n';
-        }
-      }
-      return Promise.resolve([board_name, mail_body]);
-    });
-}
-
-// カードリストを作成する
-function getCardLists(datas) {
-  let lists = [];
-  for (let list_data of datas.lists) {
-    let list = {
-      id: list_data.id,
-      name: list_data.name,
-      cards: []
-    };
-    lists.push(list);
-
-    for (let card_data of datas.cards) {
-      if (list.id === card_data.idList) {
-        list.cards.push({ name: card_data.name });
-      } else {
-        continue;
-      }
-    }
-  }
-  return lists;
-}
-
-var add_mail_interval = null;
+let add_mail_interval: NodeJS.Timer | null = null;
 
 // メール送信のリンクを作成する
 function addMailLink() {
   let $export_btn = $('a.js-export-json');
 
-  if ($('.pop-over-list').find('.js-export-mail').length != 0) {
+  if (
+    $('.pop-over-list').find('.js-export-mail').length != 0 &&
+    add_mail_interval
+  ) {
     clearInterval(add_mail_interval);
     return;
   }
@@ -140,34 +58,35 @@ function addMailLink() {
   }
 }
 
-var add_clipboard_interval = null;
+let add_clipboard_interval: NodeJS.Timer | null = null;
 
 // クリップボードにコピーのリンクを作成する
 function addClipboardLink() {
   let $export_btn = $('a.js-export-json');
-  let $pop_over_list = $('.pop-over-list');
 
-  if ($('.pop-over-list').find('.js-copy-clipboard').length != 0) {
+  if (
+    $('.pop-over-list').find('.js-copy-clipboard').length != 0 &&
+    add_clipboard_interval
+  ) {
     clearInterval(add_clipboard_interval);
     return;
   }
 
   if (!!$export_btn) {
-    // データを取りに行ってリンクに文字列を仕込む
-    createExportText().then(data => {
-      const body = data[1];
+    const boardIdReg = /\/b\/(\w{8})\//.exec(location.href);
 
-      // FIXME: chromeのアップデートかなんかでclipboard.jsダメになったので対策
+    if (!boardIdReg) {
+      console.log('cannnot get boardId or userName');
+      return;
+    }
+
+    // データを取りに行ってリンクに文字列を仕込む
+    CardService.getBoard(boardIdReg[1]).then(board => {
       $('.js-copy-clipboard').on('click', e => {
         e.preventDefault();
-        copy(body);
+        copy(board.lists.map(list => utils.listToString(list)).join('\n\n'));
         alert('クリップボードにコピーしました。');
       });
-
-      // const clipboard = new Clipboard('.js-copy-clipboard');
-      // clipboard.on('success', e => {
-      //   alert('クリップボードにコピーしました。');
-      // });
     });
 
     $('<a>')
@@ -187,35 +106,36 @@ function addClipboardLink() {
   }
 }
 
-var add_clipboard_list_interval = null;
+var add_clipboard_list_interval: NodeJS.Timer | null = null;
 
 // リストをクリップボードにコピーのリンクを作成する
-function addClipboardListLink(list_title) {
+function addClipboardListLink(listTitle: string) {
   return function() {
     let $follow_btn = $('a.js-list-subscribe');
-    let $pop_over_list = $('.pop-over-list');
 
-    if ($('.pop-over-list').find('.js-copy-clipboard-list').length != 0) {
+    if (
+      $('.pop-over-list').find('.js-copy-clipboard-list').length != 0 &&
+      add_clipboard_list_interval
+    ) {
       clearInterval(add_clipboard_list_interval);
       return;
     }
 
     if (!!$follow_btn) {
-      // データを取りに行ってリンクに文字列を仕込む
-      createExportText(list_title).then(data => {
-        const body = data[1];
+      const boardIdReg = /\/b\/(\w{8})\//.exec(location.href);
 
-        // FIXME: chromeのアップデートかなんかでclipboard.jsダメになったので対策
+      if (!boardIdReg) {
+        console.log('cannnot get boardId or userName');
+        return;
+      }
+
+      // データを取りに行ってリンクに文字列を仕込む
+      CardService.getBoard(boardIdReg[1], listTitle).then(board => {
         $('.js-copy-clipboard-list').on('click', e => {
           e.preventDefault();
-          copy(body);
+          copy(utils.listToString(board.lists[0]) + '\n');
           alert('クリップボードにコピーしました。');
         });
-
-        // const clipboard = new Clipboard('.js-copy-clipboard');
-        // clipboard.on('success', e => {
-        //   alert('クリップボードにコピーしました。');
-        // });
       });
 
       $('<a>')
@@ -245,7 +165,7 @@ $(document).ready(function($) {
   });
 
   // open list menu
-  $(document).on('mouseup', '.js-open-list-menu', function(e) {
+  $(document).on('mouseup', '.js-open-list-menu', function() {
     let list_title = $(this)
       .parent()
       .parent()

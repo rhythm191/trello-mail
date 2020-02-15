@@ -8,7 +8,7 @@ module.exports = (env, argv) => {
   const IS_PRODUCTION = argv.mode === 'production';
 
   const setting = {
-    entry: 'script.js',
+    entry: 'script.ts',
     output: {
       path: path.resolve(__dirname, './build/'),
       publicPath: '../build/',
@@ -32,7 +32,7 @@ module.exports = (env, argv) => {
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
-      extensions: ['*', '.js', '.json']
+      extensions: ['*', '.js', '.ts', '.json']
     },
     devServer: {
       historyApiFallback: true,

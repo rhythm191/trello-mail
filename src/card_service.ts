@@ -1,5 +1,5 @@
 // カード系のProxyサービス
-import { Baord } from './board';
+import { Board } from './board';
 import { CardList } from './card';
 
 // リストのデータからCardListを生成する
@@ -26,15 +26,18 @@ const CardService = {
     return data.email;
   },
 
-  getBoardLists: async (boardId: string): Promise<Baord> => {
+  getBoard: async (boardId: string, listName?: string): Promise<Board> => {
     const response = await fetch(
       `/1/boards/${boardId}?lists=open&cards=open&card_fields=name,idList&fields=name`,
       { credentials: 'include' }
     );
     const data = await response.json();
+
+    const lists = CardService.listDataToCardLists(data);
+
     return {
       name: data.name,
-      lists: CardService.listDataToCardLists(data)
+      lists: listName ? lists.filter(list => list.name === listName) : lists
     };
   },
 

@@ -1,6 +1,6 @@
 import { CardList } from './card';
 
-export type Baord = {
+export type Board = {
   name: string;
   lists: CardList[];
 };
