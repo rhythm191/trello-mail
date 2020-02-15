@@ -45,9 +45,7 @@ function createExportText(list_title) {
   const board_id = parts[1];
 
   return fetch(
-    `/1/boards/${board_id}?lists=open&cards=open` +
-      '&card_fields=name,pos,idList' +
-      '&fields=name,desc',
+    `/1/boards/${board_id}?lists=open&cards=open&card_fields=name,idList&fields=name`,
     {
       credentials: 'include'
     }

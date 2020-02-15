@@ -15,6 +15,38 @@ export function listToString(list: CardList): string {
   return result;
 }
 
+// リストのデータからCardListを生成する
+interface CardData {
+  idList: string;
+  name: string;
+}
+interface ListData {
+  id: string;
+  name: string;
+}
+
+interface Data {
+  lists: ListData[];
+  cards: CardData[];
+}
+
+// リストのResponseデータからカードリストを作成する
+export function listDataToCardLists(data: Data): CardList[] {
+  return data.lists.map(list => {
+    const cards = data.cards
+      .filter(card => card.idList === list.id)
+      .map(card => ({
+        name: card.name
+      }));
+
+    return {
+      id: list.id,
+      name: list.name,
+      cards: cards
+    };
+  });
+}
+
 // メールの文字列をエスケープする
 export function escapeMailText(str: string): string {
   return str
