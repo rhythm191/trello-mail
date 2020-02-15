@@ -1,9 +1,5 @@
 import { CardList } from '../src/card';
-import {
-  escapeMailText,
-  listDataToCardLists,
-  listToString
-} from '../src/utils';
+import { escapeMailText, listToString } from '../src/utils';
 
 describe('Utils', () => {
   describe('escapeMailText', () => {
@@ -27,41 +23,6 @@ describe('Utils', () => {
     });
     test('? -> %3f', () => {
       expect(escapeMailText('test?')).toBe('test%3f');
-    });
-  });
-
-  describe('listDataToCardLists', () => {
-    const data = {
-      id: '5dd9c9ce4243690dc802030e',
-      name: 'test',
-      desc: '',
-      cards: [
-        {
-          id: '5dd9c9e476594a31891ab5a0',
-          name: 'this is test card',
-          pos: 65535,
-          idList: '5dd9c9d8689d2f1572a5b554'
-        }
-      ],
-      lists: [
-        {
-          id: '5dd9c9d8689d2f1572a5b554',
-          name: 'this is test list',
-          closed: false,
-          idBoard: '5dd9c9ce4243690dc802030e',
-          pos: 65535,
-          subscribed: false,
-          softLimit: null
-        }
-      ]
-    };
-
-    test('valid translate', () => {
-      const result = listDataToCardLists(data);
-      expect(result.length).toBe(1);
-      expect(result[0].id).toBe('5dd9c9d8689d2f1572a5b554');
-      expect(result[0].name).toBe('this is test list');
-      expect(result[0].cards[0].name).toBe('this is test card');
     });
   });
 
