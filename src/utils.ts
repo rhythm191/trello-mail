@@ -1,7 +1,19 @@
-// import { CardList } from './card';
+import { CardList } from './card';
 
 // リストからテキストを生成する
-// export function listToString(list: CardList) {}
+export function listToString(list: CardList): string {
+  let result = '';
+
+  result += `${list.name}\n`;
+  result += `${new Array(list.name.length * 2).join('-')}\n`;
+  result += `\n`;
+  if (list.cards.length > 0) {
+    result += list.cards.map(card => `* ${card.name}`).join('\n');
+    result += `\n`;
+  }
+
+  return result;
+}
 
 // メールの文字列をエスケープする
 export function escapeMailText(str: string): string {

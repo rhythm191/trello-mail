@@ -1,4 +1,5 @@
-import { escapeMailText } from '../src/utils';
+import { CardList } from '../src/card';
+import { escapeMailText, listToString } from '../src/utils';
 
 describe('Utils', () => {
   describe('escapeMailText', () => {
@@ -22,6 +23,40 @@ describe('Utils', () => {
     });
     test('? -> %3f', () => {
       expect(escapeMailText('test?')).toBe('test%3f');
+    });
+  });
+
+  describe('listToString', () => {
+    test('no card', () => {
+      const list: CardList = {
+        id: 'xxx',
+        name: 'hoge',
+        cards: []
+      };
+
+      const result = `hoge
+-------
+
+`;
+
+      expect(listToString(list)).toBe(result);
+    });
+
+    test('2 card', () => {
+      const list: CardList = {
+        id: 'xxx',
+        name: 'hoge',
+        cards: [{ name: 'hoge' }, { name: 'fuga' }]
+      };
+
+      const result = `hoge
+-------
+
+* hoge
+* fuga
+`;
+
+      expect(listToString(list)).toBe(result);
     });
   });
 });
