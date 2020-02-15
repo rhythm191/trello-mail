@@ -20,7 +20,7 @@ function getSendAddress() {
     .getAttribute('title');
   let user_name = /^.*\((\w+)\)$/.exec(member_name)[1];
 
-  return fetch(`/1/members/${user_name}?fields=name,email`, {
+  return fetch(`/1/members/${user_name}?fields=email`, {
     credentials: 'include'
   })
     .then(res => {

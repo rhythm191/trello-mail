@@ -6,7 +6,8 @@
   "scripts": {
     "build:manifest": "cp manifest.json build",
     "build": "webpack --progress --hide-modules --mode production && yarn run build:manifest",
-    "build:dev": "yarn run build:manifest && webpack --progress --hide-modules --mode development --devtool source-map"
+    "build:dev": "yarn run build:manifest && webpack --progress --hide-modules --mode development --devtool source-map",
+    "test": "jest"
   },
   "author": "rhythm191",
   "license": "MIT",
@@ -18,13 +19,16 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.7.1",
     "@types/clipboard": "^2.0.1",
+    "@types/jest": "^25.1.2",
     "@types/jquery": "^3.3.32",
     "@types/node": "^13.7.1",
     "babel-loader": "^8.0.5",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^25.1.0",
     "prettier": "^1.16.4",
+    "ts-jest": "^25.2.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.5",
     "uglifyjs-webpack-plugin": "^2.2.0",
