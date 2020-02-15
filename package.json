@@ -12,7 +12,7 @@
   "author": "rhythm191",
   "license": "MIT",
   "dependencies": {
-    "clipboard": "^2.0.4",
+    "copy-to-clipboard": "^3.2.1",
     "jquery": "^3.4.0"
   },
   "devDependencies": {

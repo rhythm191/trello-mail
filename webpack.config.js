@@ -8,7 +8,7 @@ module.exports = (env, argv) => {
   const IS_PRODUCTION = argv.mode === 'production';
 
   const setting = {
-    entry: 'script.ts',
+    entry: 'script.js',
     output: {
       path: path.resolve(__dirname, './build/'),
       publicPath: '../build/',
