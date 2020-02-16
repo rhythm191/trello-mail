@@ -1,6 +1,6 @@
 {
   "name": "trello-mail",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Export trello's board to text mail",
   "main": "src/script.js",
   "scripts": {
