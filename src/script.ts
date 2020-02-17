@@ -84,7 +84,12 @@ function addClipboardLink() {
     CardService.getBoard(boardIdReg[1]).then(board => {
       $('.js-copy-clipboard').on('click', e => {
         e.preventDefault();
-        copy(board.lists.map(list => utils.listToString(list)).join('\n\n'));
+        copy(
+          board.lists.map(list => utils.listToString(list)).join('\r\n\r\n'),
+          {
+            format: 'text/plain'
+          }
+        );
         alert('クリップボードにコピーしました。');
       });
     });
@@ -133,7 +138,9 @@ function addClipboardListLink(listTitle: string) {
       CardService.getBoard(boardIdReg[1], listTitle).then(board => {
         $('.js-copy-clipboard-list').on('click', e => {
           e.preventDefault();
-          copy(utils.listToString(board.lists[0]) + '\n');
+          copy(utils.listToString(board.lists[0]) + '\n', {
+            format: 'text/plain'
+          });
           alert('クリップボードにコピーしました。');
         });
       });
