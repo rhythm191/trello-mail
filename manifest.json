@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Trello Mail",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Export trello's board to text mail",
   "permissions": ["tabs"],
   "content_scripts": [
