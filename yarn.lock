@@ -2985,10 +2985,10 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "2.1.1"
 
-fetch-mock@^9.0.0-beta.2:
-  version "9.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/fetch-mock/-/fetch-mock-9.0.0-beta.2.tgz#468c100c8ca01d51ffad0294c2b8587535351708"
-  integrity sha512-xLqgWqgNBMB+NQIOMa42g2Zrq8leKlN6B7TyxpBRSy1JeI9Pcht2LozPPm3rgqBtvxfhr4iwLPtASlQxgtzS5Q==
+fetch-mock@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/fetch-mock/-/fetch-mock-9.0.0.tgz#0174913da7a9411fc820529868c188aad49a3f3a"
+  integrity sha512-Nr7vPs0CdkhHiet0E9upniEAcHCb9liTNFtXtsphi3xKmkdllVIBDqcPwvIzS+wqjJMePs6BMNolLdQd0/+qAg==
   dependencies:
     babel-runtime "^6.26.0"
     core-js "^3.0.0"
