@@ -22,7 +22,7 @@
     "@types/fetch-mock": "^7.3.2",
     "@types/jest": "^26.0.4",
     "@types/jquery": "^3.5.0",
-    "@types/node": "^14.0.19",
+    "@types/node": "^14.0.20",
     "babel-loader": "^8.1.0",
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.11.0",
