@@ -30,7 +30,7 @@
     "fetch-mock": "^9.10.7",
     "jest": "^25.5.4",
     "node-fetch": "^2.6.0",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.0",
     "ts-jest": "^25.5.1",
     "ts-loader": "^8.0.3",
     "typescript": "^3.9.7",
