@@ -20,7 +20,7 @@
     "@babel/preset-env": "^7.12.7",
     "@types/clipboard": "^2.0.1",
     "@types/fetch-mock": "^7.3.3",
-    "@types/jest": "^26.0.16",
+    "@types/jest": "^26.0.17",
     "@types/jquery": "^3.5.4",
     "@types/node": "^14.14.10",
     "babel-loader": "^8.2.2",
