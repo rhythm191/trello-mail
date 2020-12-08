@@ -21,7 +21,7 @@
     "@types/clipboard": "^2.0.1",
     "@types/fetch-mock": "^7.3.3",
     "@types/jest": "^26.0.17",
-    "@types/jquery": "^3.5.4",
+    "@types/jquery": "^3.5.5",
     "@types/node": "^14.14.10",
     "babel-loader": "^8.2.2",
     "eslint": "^7.14.0",
