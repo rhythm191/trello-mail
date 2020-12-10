@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-env": "^7.12.10",
     "@types/clipboard": "^2.0.1",
     "@types/fetch-mock": "^7.3.3",
     "@types/jest": "^26.0.18",
