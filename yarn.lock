@@ -1217,10 +1217,10 @@
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
   integrity sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g==
 
-"@types/fetch-mock@^7.3.4":
-  version "7.3.4"
-  resolved "https://registry.yarnpkg.com/@types/fetch-mock/-/fetch-mock-7.3.4.tgz#cf756f63f4dfb5be5d19242629c60157aadd8253"
-  integrity sha512-9KqWnsMqFbmrz8F3LMpUIUaz+VYvrtHvAHsYctAqxajLAeb7oanblXXcJG57xUeUs+1ayPqAFPe5dOQid9BInQ==
+"@types/fetch-mock@^7.3.5":
+  version "7.3.5"
+  resolved "https://registry.yarnpkg.com/@types/fetch-mock/-/fetch-mock-7.3.5.tgz#7aee678c4e7c7e1a168bae8fdab5b8d712e377f6"
+  integrity sha512-sLecm9ohBdGIpYUP9rWk5/XIKY2xHMYTBJIcJuBBM8IJWnYoQ1DAj8F4OVjnfD0API1drlkWEV0LPNk+ACuhsg==
 
 "@types/glob@^7.1.1":
   version "7.1.1"
