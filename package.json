@@ -5,8 +5,8 @@
   "main": "src/script.js",
   "scripts": {
     "build:manifest": "cp manifest.json build",
-    "build": "webpack --progress --hide-modules --mode production && yarn run build:manifest",
-    "build:dev": "yarn run build:manifest && webpack --progress --hide-modules --mode development --devtool source-map",
+    "build": "webpack --progress --mode production && npm run build:manifest",
+    "build:dev": "npm run build:manifest && webpack --progress --mode development --devtool source-map",
     "test": "jest"
   },
   "author": "rhythm191",
